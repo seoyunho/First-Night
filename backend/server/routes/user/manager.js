@@ -3,15 +3,15 @@ let conn = require('../../DBConnection');
 let AES256 = require('nodejs-aes256');
 const key = 'this_is_key';
 
-let manager = {}
+let manager = {};
 
 //회원가입
-manager.signup = function (id, password, name, phone, callback) {
+manager.signup = function (id, password, name, gender, birthday, callback) {
     let response = {
         success: false
     };
 
-    conn.query('insert into account (id, password, name, phone) values(?,?,?,?);', [id, password, name, phone], function (err, result) {
+    conn.query('insert into account (id, password, name, gender, birthday) values(?,?,?,?,?);', [id, password, name, gender, birthday], function (err, result) {
         if (err) response.error = true;
         else if (result.affectedRows) response.success = true;
 
@@ -103,5 +103,64 @@ manager.getId = function (name, phone, callback) {
         callback(response);
     });
 }
+
+//유저정보
+manager.getUserInfo = function (id, callback) {
+    let response = {
+        name: null,
+        id: id,
+        birthday: null,
+        nickname: null,
+        profile: null
+    };
+
+    conn.query('select * from account where id=?', id, function (err, rows) {
+        if (err) response.error = true;
+        else if (rows.length == 1) {
+            response.name = rows[0].name;
+            response.profile = rows[0].profile;
+            response.nickname =rows[0].nickname;
+            response.birthday = rows[0].birthday;
+        }
+
+        callback(response);
+    });
+};
+
+manager.updateUserInfo = function(naem, nickname, birthday){
+    let response = {
+        success: false
+    }
+
+    conn.query('update')
+}
+
+//프로필 수정
+manager.putProfile = function (id, profile, callback) {
+    let response = {
+        success: false
+    };
+
+    conn.query('update accout set profile=? where id=?', [profile, id], function (err, result) {
+        if (err) response.error = true;
+        else if (result.affectedRows == 1) success = true;
+
+        callback(response);
+    });
+};
+
+//프로필 삭제
+manager.deleteProfile = function (id, callback) {
+    let response = {
+        success: false
+    };
+
+    conn.query('update accout set profile=null where id=?', id, function (err, result) {
+        if (err) response.error = true;
+        else if (result.affectedRows == 1) success = true;
+
+        callback(response);
+    });
+};
 
 module.exports = manager;

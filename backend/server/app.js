@@ -9,6 +9,7 @@ let expressSession = require('express-session');
 let app = express();
 
 var user=require('./routes/user/router');
+var playlist=require('./routes/playlist/router');
 var port = '5429';
 
 app.set('port', port);
@@ -30,7 +31,9 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser());
 
 app.use('/', user);
+app.use('/',playlist);
 
 http.createServer(app).listen(app.get('port'), function () {
     console.log('Server started on ' + app.get('port') + 'port');
 });
+

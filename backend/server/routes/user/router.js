@@ -5,7 +5,6 @@ let router = express.Router();
 let manager = require('./manager');
 let AES256 = require('nodejs-aes256');
 let SHA256 = require('sha256');
-let random = require('../../support/random');
 const key = 'this_is_key';
 // let apistore = require('apistore-sms').createClient({
 //     apiKey: 'YOUR_API_KEY',
@@ -18,10 +17,12 @@ router.route('/account/signup').post(function (req, res) {
     let id = req.body.id;
     let name = req.body.name;
     let password = SHA256(req.body.password);
-    let phone = req.body.phone;
+    let gender= req.body.gender;
+    let birthday= req.body.birthday;
+    
     console.log(id, name, password, phone);
 
-    manager.signup(id, password, name, phone, function (response) {
+    manager.signup(id, password, name, gender, birthday, function (response) {
         if (response.success) {
             res.writeHead(201, {
                 'Content-Type': 'application/json'
@@ -135,4 +136,65 @@ router.route('/account/findpassword').put(function (req, res) {
     });
 });
 
+//유저 정보
+router.route('/userinfo/:id').get(function (req, res) {
+    let id = req.params.id;
+    console.log(id);
+    manager.getUserInfo(id, function (response) {
+        res.writeHead(200, {
+            'Content-Type': 'application/json'
+        });
+        res.write(JSON.stringify(response));
+        res.end();
+    });
+});
+
+//유저 정보 업데이트
+router.route('/userinfo/:id').put(function (req, res) {
+    
+    manager.getUserInfo(id, function (response) {
+        res.writeHead(200, {
+            'Content-Type': 'application/json'
+        });
+        res.write(JSON.stringify(response));
+        res.end();
+    });
+});
+
+//프로필 수정
+router.route('/mypage/profile/:id/').put(function (req, res) {
+    let id = req.params.id;
+    let profile = req.body.profile;
+
+    manager.deleteProfile(id, profile, function (response) {
+        if (response.success) {
+            res.writeHead(201, {
+                'Content-Type': 'application/json'
+            });
+        } else {
+            res.writeHead(204, {
+                'Content-Type': 'application/json'
+            });
+        }
+        res.end();
+    });
+});
+
+//프로필 삭제
+router.route('/mypage/profile/:id').delete(function (req, res) {
+    let id = req.params.id;
+
+    manager.deleteProfile(id, function (response) {
+        if (response.success) {
+            res.writeHead(201, {
+                'Content-Type': 'application/json'
+            });
+        } else {
+            res.writeHead(204, {
+                'Content-Type': 'application/json'
+            });
+        }
+        res.end();
+    });
+});
 module.exports = router;
