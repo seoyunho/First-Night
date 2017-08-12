@@ -6,10 +6,6 @@ let manager = require('./manager');
 let AES256 = require('nodejs-aes256');
 let SHA256 = require('sha256');
 const key = 'this_is_key';
-// let apistore = require('apistore-sms').createClient({
-//     apiKey: 'YOUR_API_KEY',
-//     apiId: 'YOUR_ID'
-// });
 let certifyString;
 
 //회원가입
@@ -20,7 +16,7 @@ router.route('/account/signup').post(function (req, res) {
     let gender= req.body.gender;
     let birthday= req.body.birthday;
     
-    console.log(id, name, password, phone);
+    console.log(id, name, password, gender, birthday);
 
     manager.signup(id, password, name, gender, birthday, function (response) {
         if (response.success) {
@@ -78,24 +74,6 @@ router.route('/account/idcheck').post(function (req, res) {
     });
 });
 
-//전화번호 중복 체크
-router.route('/account/phonecheck').post(function (req, res) {
-    let phone = req.body.phone;
-
-    manager.phonecheck(phone, function (response) {
-        if (response.overlap) {
-            res.writeHead(200, {
-                'Content-Type': 'application/json'
-            });
-        } else {
-            res.writeHead(204, {
-                'Content-Type': 'application/json'
-            });
-        }
-        res.end();
-    });
-});
-
 //아이디 찾기
 router.route('/account/findid').get(function (req, res) {
     let name = req.body.name;
@@ -140,18 +118,6 @@ router.route('/account/findpassword').put(function (req, res) {
 router.route('/userinfo/:id').get(function (req, res) {
     let id = req.params.id;
     console.log(id);
-    manager.getUserInfo(id, function (response) {
-        res.writeHead(200, {
-            'Content-Type': 'application/json'
-        });
-        res.write(JSON.stringify(response));
-        res.end();
-    });
-});
-
-//유저 정보 업데이트
-router.route('/userinfo/:id').put(function (req, res) {
-    
     manager.getUserInfo(id, function (response) {
         res.writeHead(200, {
             'Content-Type': 'application/json'

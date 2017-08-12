@@ -63,19 +63,6 @@ manager.idCheck = function (id, callback) {
     });
 }
 
-//전화번호 중복 체크
-manager.phonecheck = function (phone, callback) {
-    let response = {
-        overlap: false
-    };
-    conn.query('select * from account where phone=?', phone, function (err, rows) {
-        if (err) response.error = true;
-        else if (rows.length == 1) response.overlap = true;
-
-        callback(response);
-    });
-}
-
 //비밀번호 변경
 manager.updatePassword = function (id, callback) {
     let response = {
@@ -111,7 +98,8 @@ manager.getUserInfo = function (id, callback) {
         id: id,
         birthday: null,
         nickname: null,
-        profile: null
+        profile: null,
+        gender: null
     };
 
     conn.query('select * from account where id=?', id, function (err, rows) {
@@ -121,19 +109,12 @@ manager.getUserInfo = function (id, callback) {
             response.profile = rows[0].profile;
             response.nickname =rows[0].nickname;
             response.birthday = rows[0].birthday;
+            response.gender = rows[0].gender;
         }
 
         callback(response);
     });
 };
-
-manager.updateUserInfo = function(naem, nickname, birthday){
-    let response = {
-        success: false
-    }
-
-    conn.query('update')
-}
 
 //프로필 수정
 manager.putProfile = function (id, profile, callback) {
